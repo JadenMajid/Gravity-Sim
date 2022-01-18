@@ -1,4 +1,6 @@
+from operator import truediv
 import pygame
+import random
 #import pygame_widgets
 #import StackoverflowSlider
 
@@ -24,7 +26,7 @@ GRAY =  (200, 200, 200)
 BLUE = (0,   0,   255)
 GREEN = (0,   255, 0)
 RED = (255, 0,   0)
-YELLOW = (0,   255, 255)
+YELLOW = (255,   255, 0)
 
 # Speed and Gravitational Constant
 DT = 0.1
@@ -75,13 +77,9 @@ THREEBODYORBIT = [Asteroid(WIDTH / 2 - 200, 0, HEIGHT / 2, 11 , 300,
                   Asteroid(WIDTH / 2 + 200, 0, HEIGHT / 2, 20, 10,
                            4, WHITE)]
 
-TWOOBJECTSPINORBIT = [Asteroid(WIDTH / 2 - 500, 6, HEIGHT / 2 + 150, 0, 100,
-                               10, WHITE),
-                      Asteroid(WIDTH / 2 + 200, 0, HEIGHT / 2, 0, 100,
-                               10, YELLOW),
-                      Asteroid(WIDTH / 2, 0, HEIGHT / 2 + 75, 0, 100,
-                               10, WHITE),
-                      Asteroid(WIDTH / 2 - 150, 2, HEIGHT / 2 - 75, 4, 100,
+TWOOBJECTSPINORBIT = [Asteroid(WIDTH / 2 - 75, 0, HEIGHT / 2, 2, 100,
+                               10, BLUE),
+                      Asteroid(WIDTH / 2 + 75, 0, HEIGHT / 2, -2, 100,
                                10, YELLOW)]
 
 COLLISION = [Asteroid(WIDTH / 2 + 200, -2, HEIGHT / 2, 0, 100,
@@ -89,7 +87,7 @@ COLLISION = [Asteroid(WIDTH / 2 + 200, -2, HEIGHT / 2, 0, 100,
                       Asteroid(WIDTH / 2 - 200, 7, HEIGHT / 2, 0, 10,
                                10, YELLOW)]
 
-STARTCOND = STABLETWOBODYORBIT
+STARTCOND = TWOOBJECTSPINORBIT
 
 
 def nextasteroid(a):
@@ -102,7 +100,7 @@ def dist(one, two):
     return math.hypot((one.x - two.x), (one.y - two.y))
 
 
-def nextasteroids(loa, lot):
+def nextasteroids(loa, lot, trails):
     oldloa = loa
     listout = []
     #ke=0
@@ -145,7 +143,8 @@ def nextasteroids(loa, lot):
     #Stepping forward position with velocity 
     for a in listout:
         a = nextasteroid(a)
-        lot.append(AsteroidTrail(int(a.x), int(a.y), a.color))
+        if trails:
+            lot.append(AsteroidTrail(int(a.x), int(a.y), a.color))
     return (listout, lot)
 
 
@@ -164,17 +163,22 @@ def drawtrails(screen, lot):
     for t in lot:
         drawtrail(screen, t)
 
-def render(screen, loa, lot):
+def render(screen, loa, trails, lot):
     drawasteroids(screen, loa)
-    drawtrails(screen, lot)
+    if trails:
+        drawtrails(screen, lot)
 
 
 def main():
     pygame.init()
 
+    clock = pygame.time.Clock()
+    
     t = 0
     lot = []
     loa = STARTCOND
+
+    trails = True
 
     pygame.display.set_caption("Newtonian Gravity Simulator")
 
@@ -185,8 +189,9 @@ def main():
 
     while running:
 
-
+        DT = clock.tick(60)
         t = t + DT
+        
 
         screen.fill(BLACK)
 
@@ -196,14 +201,22 @@ def main():
             if event.type == pygame.QUIT:
                 # change the value to False, to exit the main loop
                 running = False
+
             mouse_presses = pygame.mouse.get_pressed()
             if mouse_presses[0]:
                 pos = pygame.mouse.get_pos()
-                loa.append(Asteroid(pos[0], 0, pos[1], 10, 10, 4, WHITE))
+                loa.append(Asteroid(pos[0], 0, pos[1], 0, 10, 4, (random.randint(0, 255),random.randint(0, 255),random.randint(0, 255))))
+
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_t:
+                    trails = not trails
+                    lot = []
+                if event.key == pygame.K_c:
+                    lot = []
         
             
-        render(screen, loa, lot)
-        temp = nextasteroids(loa, lot)
+        render(screen, loa, trails, lot)
+        temp = nextasteroids(loa, lot, trails)
         loa = temp[0]
         lot = temp[1]
 
