@@ -93,7 +93,7 @@ COLLISION = [Asteroid(WIDTH / 2 + 200, -2, HEIGHT / 2, 0, 100,
 BLACKHOLE = [Asteroid(WIDTH / 2, 0, HEIGHT / 2, 0, 20000,
                                10, WHITE)]
 
-STARTCOND = TWOOBJECTSPINORBIT
+STARTCOND = copy.deepcopy(TWOOBJECTSPINORBIT)
 
 
 def nextasteroid(a):
@@ -243,7 +243,7 @@ def main():
                     trails = not trails
                     lot = []
                 if event.key == pygame.K_c:
-                    loa = copy.copy(STARTCOND)
+                    loa = copy.deepcopy(TWOOBJECTSPINORBIT)
                     lot = []
                 if event.key == pygame.K_SPACE:
                     paused = not paused
