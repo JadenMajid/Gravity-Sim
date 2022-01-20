@@ -6,3 +6,5 @@ with random +-10 velocity in x and y directions
 T: enable/disable trails(helps with performance)
 C: clear to initial conditions
 Space: pause
+Plus: speed up time by (dt*1.1)
+Minus: slow down time by (dt/1.1)

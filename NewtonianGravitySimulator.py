@@ -1,5 +1,6 @@
 from operator import truediv
 import pygame
+from pygame_widgets.slider import Slider
 import copy
 from pygame import gfxdraw
 import random
@@ -15,10 +16,10 @@ import math
 """ !!!!!!!!!!!!!!   WISHLIST   !!!!!!!!!!!!!!!!
     1) Object Trails                 DONE
     2) Add objects with mouse events DONE
-    3) Slider for time
-    4) Reverse time?????
-    5) Collisions
-    6)
+    3) Slider for time               DONE
+    4) Reverse time?????             SCRAPPED
+    5) Collisions                    DONE
+    6) 
 """
 
 
@@ -32,7 +33,7 @@ RED = (255, 0,   0)
 YELLOW = (255,   255, 0)
 
 # Speed and Gravitational Constant
-dt = 0.1
+#dt = 0.1
 G = 1
 
 # Size of
@@ -61,42 +62,42 @@ class AsteroidTrail:
 
 
 
-AST0 = Asteroid(WIDTH / 2 - 200, 0, HEIGHT / 2, 10, 10,
+AST0 = Asteroid(WIDTH / 2 - 200, 0, HEIGHT / 2, 10, 1000,
                 4, WHITE)
 AST1 = Asteroid(WIDTH / 2, 0, HEIGHT / 2, 0, 1000,
                 10, YELLOW)
-AST2 = Asteroid(WIDTH / 2 + 200, 0, HEIGHT / 2, -10, 10,
+AST2 = Asteroid(WIDTH / 2 + 200, 0, HEIGHT / 2, -10, 1000,
                 4, WHITE)
 
-STABLETWOBODYORBIT = [Asteroid(WIDTH / 2 - 200, -1, HEIGHT / 2, 10, 10,
+CIRCULARORBIT = [Asteroid(WIDTH / 2 - 100, 0, HEIGHT / 2, 10, 10,
                                4, WHITE),
-                      Asteroid(WIDTH / 2, 0, HEIGHT / 2, -0.1, 1000,
+                      Asteroid(WIDTH / 2, 0, HEIGHT / 2, -0.01, 10000,
                                10, YELLOW)]
 
-THREEBODYORBIT = [Asteroid(WIDTH / 2 - 200, 0, HEIGHT / 2, 11 , 3000,
-                           6, RED),
-                  Asteroid(WIDTH / 2, 0, HEIGHT / 2, 0, 3000,
+THREEBODYORBIT = [Asteroid(WIDTH / 2 - 50, 0, HEIGHT / 2, 11/1.5 , 3000,
+                           2, RED),
+                  Asteroid(WIDTH / 2, 0, HEIGHT / 2, -9.3/1.5, 10000,
                            10, YELLOW),
-                  Asteroid(WIDTH / 2 + 200, 0, HEIGHT / 2, 20, 10000,
-                           4, WHITE)]
+                  Asteroid(WIDTH / 2 + 50, 0, HEIGHT / 2, 20/1.5, 3000,
+                           2, WHITE)]
 
-TWOOBJECTSPINORBIT = [Asteroid(WIDTH / 2 - 75, 0, HEIGHT / 2, 2, 10000,
+TWOOBJECTSPINORBIT = [Asteroid(WIDTH / 2 - 75, 0, HEIGHT / 2, 7, 10000,
                                5, BLUE),
-                      Asteroid(WIDTH / 2 + 75, 0, HEIGHT / 2, -2, 10000,
+                      Asteroid(WIDTH / 2 + 75, 0, HEIGHT / 2, -7, 10000,
                                5, YELLOW)]
 
-COLLISION = [Asteroid(WIDTH / 2 + 200, -2, HEIGHT / 2, 0, 100,
+COLLISION = [Asteroid(WIDTH / 2 + 200, -2, HEIGHT / 2, 0, 1000,
                                10, WHITE),
-                      Asteroid(WIDTH / 2 - 200, 7, HEIGHT / 2, 0, 10,
+                      Asteroid(WIDTH / 2 - 200, 7, HEIGHT / 2, 0, 1000,
                                10, YELLOW)]
 
-BLACKHOLE = [Asteroid(WIDTH / 2, 0, HEIGHT / 2, 0, 20000,
+BLACKHOLE = [Asteroid(WIDTH / 2, 0, HEIGHT / 2, 0, 50000,
                                10, WHITE)]
 
-STARTCOND = copy.deepcopy(TWOOBJECTSPINORBIT)
+STARTCOND = []
 
 
-def nextasteroid(a):
+def nextasteroid(a, dt):
     a.x = a.x + dt * a.dx
     a.y = a.y + dt * a.dy
     return a
@@ -106,15 +107,11 @@ def dist(one, two):
     return math.hypot((one.x - two.x), (one.y - two.y))
 
 
-def nextasteroids(loa, lot, trails):
+def nextasteroids(loa, lot, trails, dt):
+
     oldloa = loa
     listout = []
-    #ke=0
-    #pe=0
-    px=0
-    py=0
 
-    # Iterating upon old values to find new values
     for a in loa:
         for old in oldloa:
             # Not objects on themselves(would be dividing by 0)
@@ -151,26 +148,40 @@ def nextasteroids(loa, lot, trails):
     #Stepping forward position with velocity 
     temp = listout
     for a in listout:
+        # For loop for collision check
         for b in temp:
             if colliding(a, b) and not (a == b):
+                # If statements to add smaller mass to larger mass
                 if a.m > b.m:
                     a.dx = (a.m * a.dx + b.m * b.dx)/ (a.m+b.m)
                     a.dy = (a.m * a.dy + b.m * b.dy)/ (a.m+b.m)
                     a.m += b.m
                     a.r = round(math.sqrt(a.r**2 + b.r**2))
-                    listout.remove(b)
+                    a.color = ((a.color[0]*a.m+b.color[0]*b.m)/((a.m+b.m)),
+                                (a.color[1]*a.m+b.color[1]*b.m)/((a.m+b.m)),
+                                (a.color[2]*a.m+b.color[2]*b.m)/((a.m+b.m)))
+                    if listout.count(b) > 0:
+                        listout.remove(b)
                 else:
                     b.dx = (a.m * a.dx + b.m * b.dx)/ (a.m+b.m)
                     b.dy = (a.m * a.dy + b.m * b.dy)/ (a.m+b.m)
                     b.m += a.m
                     b.r = round(math.sqrt(a.r**2 + b.r**2))
-                    listout.remove(a)
-        a = nextasteroid(a)
+                    b.color = ((a.color[0]*a.m+b.color[0]*b.m)/((a.m+b.m)),
+                                (a.color[1]*a.m+b.color[1]*b.m)/((a.m+b.m)),
+                                (a.color[2]*a.m+b.color[2]*b.m)/((a.m+b.m)))
+                    if listout.count(a) > 0:
+                        listout.remove(a)
+        a = nextasteroid(a, dt)
 
+        # Check to add trails or not
         if trails:
             lot.append(AsteroidTrail(int(a.x), int(a.y), a.color))
+        
+        #remove elements far away from screen
         if abs(a.x) > 10000 or abs(a.y) > 10000:
             listout.remove(a)
+        
     return (listout, lot)
 
 def colliding(a1, a2):
@@ -194,9 +205,10 @@ def drawtrails(screen, lot):
         drawtrail(screen, t)
 
 def render(screen, loa, trails, lot):
-    drawasteroids(screen, loa)
     if trails:
         drawtrails(screen, lot)
+    drawasteroids(screen, loa)
+
 
 
 def main():
@@ -205,22 +217,28 @@ def main():
     clock = pygame.time.Clock()
     
     t = 0
+    speed = (1/500)
     lot = []
     loa = copy.copy(STARTCOND)
 
-    trails = True
 
     pygame.display.set_caption("Newtonian Gravity Simulator")
 
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
 
+    #slider = Slider(screen, 100, 100, 800, 40, min=0, max=0.2, step=0.0001)
 
     running = True
     paused = False
+    trails = True
+    reverse = False
 
     while running:
 
-        dt = clock.tick(60) /4
+        dt = clock.tick(60) * speed
+
+        if reverse:
+            dt = -abs(dt)
         t = t + dt
         
 
@@ -243,15 +261,35 @@ def main():
                     trails = not trails
                     lot = []
                 if event.key == pygame.K_c:
-                    loa = copy.deepcopy(TWOOBJECTSPINORBIT)
+                    loa = []
                     lot = []
                 if event.key == pygame.K_SPACE:
                     paused = not paused
                 if event.key == pygame.K_ESCAPE:
                     running = False
+                if event.key == pygame.K_1:
+                    loa = copy.deepcopy(TWOOBJECTSPINORBIT)
+                    lot = []
+                if event.key == pygame.K_2:
+                    loa = copy.deepcopy(CIRCULARORBIT)
+                    lot = []
+                if event.key == pygame.K_3:
+                    loa = copy.deepcopy(THREEBODYORBIT)
+                    lot = []
+                if event.key == pygame.K_4:
+                    loa = copy.deepcopy(COLLISION)
+                    lot = []
+                if event.key == pygame.K_5:
+                    loa = copy.deepcopy(BLACKHOLE)
+                    lot = []
+                if event.key == pygame.K_EQUALS:
+                    speed = speed * 1.1
+                if event.key == pygame.K_MINUS:
+                    speed = speed * (1/1.1)
+                    
         
         if not paused:
-            temp = nextasteroids(loa, lot, trails)
+            temp = nextasteroids(loa, lot, trails, dt)
             loa = temp[0]
             lot = temp[1]
         render(screen, loa, trails, lot)
