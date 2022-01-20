@@ -1,14 +1,7 @@
-from operator import truediv
 import pygame
-from pygame_widgets.slider import Slider
 import copy
 from pygame import gfxdraw
 import random
-#import pygame_widgets
-#import StackoverflowSlider
-
-#from pygame_widgets.slider import Slider
-#from pygame_widgets.textbox import TextBox
 import math
 
 
@@ -91,7 +84,7 @@ COLLISION = [Asteroid(WIDTH / 2 + 200, -2, HEIGHT / 2, 0, 1000,
                       Asteroid(WIDTH / 2 - 200, 7, HEIGHT / 2, 0, 1000,
                                10, YELLOW)]
 
-BLACKHOLE = [Asteroid(WIDTH / 2, 0, HEIGHT / 2, 0, 50000,
+BLACKHOLE = [Asteroid(WIDTH / 2, 0, HEIGHT / 2, 0, 500000,
                                10, WHITE)]
 
 STARTCOND = []
@@ -124,7 +117,6 @@ def nextasteroids(loa, lot, trails, dt):
                     hypotenuse = a.r / 2
                 accel = (G * old.m) / (hypotenuse ** 2)
                 theta = math.atan2((a.x - old.x), (a.y - old.y))
-                #pe = pe + G * a.m * old.m / (math.hypot(abs(a.x - old.x), abs(a.y - old.y)))
                 
 
 
@@ -134,14 +126,6 @@ def nextasteroids(loa, lot, trails, dt):
             a.dx = a.dx - ax * dt
             a.dy = a.dy - ay * dt
         listout.append(a)
-            
-        #ke= ke + (1/2) * a.m * (a.dx**2+a.dy**2) 
-        
-    
-    #print(ke)
-    #print(pe)
-    #print(ke + pe)
-    #print("---------------------")
 
 
     
@@ -225,8 +209,6 @@ def main():
     pygame.display.set_caption("Newtonian Gravity Simulator")
 
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
-
-    #slider = Slider(screen, 100, 100, 800, 40, min=0, max=0.2, step=0.0001)
 
     running = True
     paused = False
