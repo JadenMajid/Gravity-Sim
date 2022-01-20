@@ -4,8 +4,6 @@ from pygame import gfxdraw
 import random
 import math
 
-
-
 """ !!!!!!!!!!!!!!   WISHLIST   !!!!!!!!!!!!!!!!
     1) Object Trails                 DONE
     2) Add objects with mouse events DONE
@@ -25,11 +23,10 @@ GREEN = (0,   255, 0)
 RED = (255, 0,   0)
 YELLOW = (255,   255, 0)
 
-# Speed and Gravitational Constant
-#dt = 0.1
+#Gravitational Constant
 G = 1
 
-# Size of
+# Size of Screen
 HEIGHT = 600
 WIDTH = 1000
 
@@ -50,18 +47,15 @@ class AsteroidTrail:
         self.y = y
         self.color = color
         
-
-
-
-
-
+# Example Asteroids
 AST0 = Asteroid(WIDTH / 2 - 200, 0, HEIGHT / 2, 10, 1000,
                 4, WHITE)
-AST1 = Asteroid(WIDTH / 2, 0, HEIGHT / 2, 0, 1000,
+AST1 = Asteroid(WIDTH / 2, 0, HEIGHT / 2, 0, 10000,
                 10, YELLOW)
 AST2 = Asteroid(WIDTH / 2 + 200, 0, HEIGHT / 2, -10, 1000,
                 4, WHITE)
 
+# Starting Presets
 CIRCULARORBIT = [Asteroid(WIDTH / 2 - 100, 0, HEIGHT / 2, 10, 10,
                                4, WHITE),
                       Asteroid(WIDTH / 2, 0, HEIGHT / 2, -0.01, 10000,
@@ -75,7 +69,7 @@ THREEBODYORBIT = [Asteroid(WIDTH / 2 - 50, 0, HEIGHT / 2, 11/1.5 , 3000,
                            2, WHITE)]
 
 TWOOBJECTSPINORBIT = [Asteroid(WIDTH / 2 - 75, 0, HEIGHT / 2, 7, 10000,
-                               5, BLUE),
+                               5, RED),
                       Asteroid(WIDTH / 2 + 75, 0, HEIGHT / 2, -7, 10000,
                                5, YELLOW)]
 
@@ -129,7 +123,7 @@ def nextasteroids(loa, lot, trails, dt):
 
 
     
-    #Stepping forward position with velocity 
+    # Stepping forward position with velocity 
     temp = listout
     for a in listout:
         # For loop for collision check
@@ -162,8 +156,8 @@ def nextasteroids(loa, lot, trails, dt):
         if trails:
             lot.append(AsteroidTrail(int(a.x), int(a.y), a.color))
         
-        #remove elements far away from screen
-        if abs(a.x) > 10000 or abs(a.y) > 10000:
+        # Remove elements far away from screen
+        if abs(a.x - (WIDTH / 2)) > 2 * WIDTH or abs(a.y - (HEIGHT / 2)) > 2 * HEIGHT:
             listout.remove(a)
         
     return (listout, lot)
@@ -228,9 +222,9 @@ def main():
 
         events = pygame.event.get()
         for event in events:
-            # only do something if the event is of type QUIT
+            # Only do something if the event is of type QUIT
             if event.type == pygame.QUIT:
-                # change the value to False, to exit the main loop
+                # Change the value to False, to exit the main loop
                 running = False
 
             mouse_presses = pygame.mouse.get_pressed()
@@ -279,4 +273,5 @@ def main():
         pygame.display.flip()
         pygame.display.update()
 
-main()
+if __name__ == "__main__":
+    main()
