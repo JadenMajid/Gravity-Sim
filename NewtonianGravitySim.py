@@ -236,15 +236,15 @@ def main():
                     speed = speed * 1.1
                 if event.key == pygame.K_MINUS:
                     speed = speed * (1/1.1)
-                    
-        for a in loa:
-            # Remove elements far away from screen
-            if abs(a.x - (WIDTH / 2)) > 2 * WIDTH or abs(a.y - (HEIGHT / 2)) > 2 * HEIGHT:
-                loa.remove(a)
-            for b in loa.copy():
-                if a.colliding(b) and a.m > b.m:
-                    loa.remove(b)
-            a.nextparticle(loa, dt, trails)
+        if not paused:   
+            for a in loa:
+                # Remove elements far away from screen
+                if abs(a.x - (WIDTH / 2)) > 2 * WIDTH or abs(a.y - (HEIGHT / 2)) > 2 * HEIGHT:
+                    loa.remove(a)
+                for b in loa.copy():
+                    if a.colliding(b) and a.m > b.m:
+                        loa.remove(b)
+                a.nextparticle(loa, dt, trails)
 
         render(screen, loa, trails)
 
