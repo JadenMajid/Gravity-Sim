@@ -17,3 +17,4 @@ Minus: slow down time by (dt/1.1)
 3: 3 Body unstable orbit
 4: Collision Between 2 stars restricted to x axis (shows conservation of momentum)
 5: Black hole(Star with very high mass)
+6: Sun and Moon System!!! traces out cool pattern

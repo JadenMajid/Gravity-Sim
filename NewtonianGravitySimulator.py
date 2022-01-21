@@ -59,9 +59,9 @@ def orbitalvelocity(m, r):
     return math.sqrt(G*m/r)
 
 # Starting Presets
-CIRCULARORBIT = [Asteroid(WIDTH / 2 - 100, 0, HEIGHT / 2, 10, 10,
+CIRCULARORBIT = [Asteroid(WIDTH / 2 - 100, 0, HEIGHT / 2, orbitalvelocity(10000, 100), 10,
                                4, WHITE),
-                      Asteroid(WIDTH / 2, 0, HEIGHT / 2, -0.01, 10000,
+                      Asteroid(WIDTH / 2, 0, HEIGHT / 2, -orbitalvelocity(10000, 100)/1000, 10000,
                                10, YELLOW)]
 
 THREEBODYORBIT = [Asteroid(WIDTH / 2 - 50, 0, HEIGHT / 2, 11/1.5 , 3000,
@@ -108,7 +108,7 @@ TWINSUN = [Asteroid(WIDTH / 2 - 300, 0, HEIGHT / 2, 13, 500,
                       Asteroid(WIDTH / 2 - 315, 0, HEIGHT / 2, 18, 10**-40,
                                1, GRAY)]
 
-STARTCOND = TWINSUN
+STARTCOND = []
 
 
 
