@@ -27,7 +27,7 @@ YELLOW = (255,   255, 0)
 G = 1
 
 # Size of Screen
-HEIGHT = 600
+HEIGHT = 800
 WIDTH = 1000
 
 
@@ -55,6 +55,9 @@ AST1 = Asteroid(WIDTH / 2, 0, HEIGHT / 2, 0, 10000,
 AST2 = Asteroid(WIDTH / 2 + 200, 0, HEIGHT / 2, -10, 1000,
                 4, WHITE)
 
+def orbitalvelocity(m, r):
+    return math.sqrt(G*m/r)
+
 # Starting Presets
 CIRCULARORBIT = [Asteroid(WIDTH / 2 - 100, 0, HEIGHT / 2, 10, 10,
                                4, WHITE),
@@ -81,7 +84,32 @@ COLLISION = [Asteroid(WIDTH / 2 + 200, -2, HEIGHT / 2, 0, 1000,
 BLACKHOLE = [Asteroid(WIDTH / 2, 0, HEIGHT / 2, 0, 500000,
                                10, WHITE)]
 
-STARTCOND = []
+UNSTABLESUNPLANETMOON = [Asteroid(WIDTH / 2 - 300, 0, HEIGHT / 2, orbitalvelocity(50000,300), 500,
+                               4, BLUE),
+                      Asteroid(WIDTH / 2, 0, HEIGHT / 2, -0.13, 50000,
+                               10, YELLOW),
+                      Asteroid(WIDTH / 2 - 315, 0, HEIGHT / 2, orbitalvelocity(50000,300) - orbitalvelocity(500,15), 10**-40,
+                               1, GRAY)]
+
+
+REALSOLARSYSTEM = [Asteroid(WIDTH / 2 - 300, 0, HEIGHT / 2, 2, 5.972*10**24,
+                               4, BLUE),
+                      Asteroid(WIDTH / 2, 0, HEIGHT / 2, -0.13, 2*10**30,
+                               10, YELLOW),
+                      Asteroid(WIDTH / 2 - 315, 0, HEIGHT / 2, 18, 7.3476*10**22,
+                               1, GRAY)]
+
+TWINSUN = [Asteroid(WIDTH / 2 - 300, 0, HEIGHT / 2, 13, 500,
+                               4, BLUE),
+                      Asteroid(WIDTH / 2 - 50, 0, HEIGHT / 2, 10 - .13/2, 25000,
+                               10, YELLOW),
+                      Asteroid(WIDTH / 2 + 50, 0, HEIGHT / 2, -10 - .13/2, 25000,
+                               10, GREEN),
+                      Asteroid(WIDTH / 2 - 315, 0, HEIGHT / 2, 18, 10**-40,
+                               1, GRAY)]
+
+STARTCOND = TWINSUN
+
 
 
 def nextasteroid(a, dt):
@@ -257,6 +285,9 @@ def main():
                     lot = []
                 if event.key == pygame.K_5:
                     loa = copy.deepcopy(BLACKHOLE)
+                    lot = []
+                if event.key == pygame.K_6:
+                    loa = copy.deepcopy(UNSTABLESUNPLANETMOON)
                     lot = []
                 if event.key == pygame.K_EQUALS:
                     speed = speed * 1.1

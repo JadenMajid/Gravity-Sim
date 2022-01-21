@@ -1,3 +1,5 @@
+Made By: Jaden Majid and Eric Kulkarni
+
 Controls:
 
 click with LMB: add an asteroid of mass 10 to the simulation 
