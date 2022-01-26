@@ -138,12 +138,28 @@ UNSTABLESUNPLANETMOON = [Particle(WIDTH / 2 - 300, 0, HEIGHT / 2, 13, 500,
                                4, BLUE, 0),
                       Particle(WIDTH / 2, 0, HEIGHT / 2, -0.13, 50000,
                                10, YELLOW, 0),
-                      Particle(WIDTH / 2 - 315, 0, HEIGHT / 2, 18, 10**-12,
+                      Particle(WIDTH / 2 - 315, 0, HEIGHT / 2, 18, 10**-40,
                                1, GRAY, 0)]
 
 
+REALSOLARSYSTEM = [Particle(WIDTH / 2 - 300, 0, HEIGHT / 2, 2, 5.972*10**24,
+                               4, BLUE, 0),
+                      Particle(WIDTH / 2, 0, HEIGHT / 2, -0.13, 2*10**30,
+                               10, YELLOW, 0),
+                      Particle(WIDTH / 2 - 315, 0, HEIGHT / 2, 18, 7.3476*10**22,
+                               1, GRAY, 0)]
+
+TWINSUN = [Particle(WIDTH / 2 - 300, 0, HEIGHT / 2, 13, 500,
+                               4, BLUE, 0),
+                      Particle(WIDTH / 2 - 50, 0, HEIGHT / 2, 10 - .13/2, 25000,
+                               10, YELLOW, 0),
+                      Particle(WIDTH / 2 + 50, 0, HEIGHT / 2, -10 - .13/2, 25000,
+                               10, GREEN, 0),
+                      Particle(WIDTH / 2 - 315, 0, HEIGHT / 2, 18, 10**-40,
+                               1, GRAY, 0)]
+
 # Start Conditions
-STARTCOND = []
+STARTCOND = TWINSUN
 
 
 def dist(one, two):
