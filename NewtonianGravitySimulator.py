@@ -22,6 +22,7 @@ BLUE = (0,   0,   255)
 GREEN = (0,   255, 0)
 RED = (255, 0,   0)
 YELLOW = (255,   255, 0)
+ORANGE = (255,  165, 0)
 
 #Gravitational Constant
 G = 1
@@ -32,6 +33,7 @@ WIDTH = 1000
 
 
 class Asteroid:
+
     def __init__(self, x, dx, y, dy, m, r, color):
         self.x = x
         self.dx = dx
@@ -42,6 +44,7 @@ class Asteroid:
         self.color = color
 
 class AsteroidTrail:
+    
     def __init__(self, x, y, color):
         self.x = x
         self.y = y
@@ -55,6 +58,7 @@ AST1 = Asteroid(WIDTH / 2, 0, HEIGHT / 2, 0, 10000,
 AST2 = Asteroid(WIDTH / 2 + 200, 0, HEIGHT / 2, -10, 1000,
                 4, WHITE)
 
+# Calculates Orbital velocity for circular orbit with mass of larger body and radius of orbit
 def orbitalvelocity(m, r):
     return math.sqrt(G*m/r)
 
@@ -81,15 +85,38 @@ COLLISION = [Asteroid(WIDTH / 2 + 200, -2, HEIGHT / 2, 0, 1000,
                       Asteroid(WIDTH / 2 - 200, 7, HEIGHT / 2, 0, 1000,
                                10, YELLOW)]
 
-BLACKHOLE = [Asteroid(WIDTH / 2, 0, HEIGHT / 2, 0, 500000,
-                               10, WHITE)]
+BLACKHOLE = [Asteroid(0, 1, HEIGHT/2, .8, 10000,
+                               40, BLACK)]
 
-UNSTABLESUNPLANETMOON = [Asteroid(WIDTH / 2 - 300, 0, HEIGHT / 2, orbitalvelocity(50000,300), 500,
-                               4, BLUE),
-                      Asteroid(WIDTH / 2, 0, HEIGHT / 2, -0.13, 50000,
-                               10, YELLOW),
-                      Asteroid(WIDTH / 2 - 315, 0, HEIGHT / 2, orbitalvelocity(50000,300) - orbitalvelocity(500,15), 10**-40,
-                               1, GRAY)]
+SUNMASS = 50000
+SUNDX = 0
+SUNDY = 0
+EARTHORBITRADIUS = 375
+MOONORBITRADIUS = EARTHORBITRADIUS/40
+MERCURYORBITRADIUS = 150
+MERCURYMOONORBITRADIUS = MERCURYORBITRADIUS/17
+VENUSORBITRADIUS = 250
+VENUSMOONORBITRADIUS = VENUSORBITRADIUS/50
+
+PLANETSANDMOONS = [Asteroid(WIDTH / 2 - EARTHORBITRADIUS, 0, HEIGHT / 2, orbitalvelocity(SUNMASS,EARTHORBITRADIUS), 500,
+                               2, BLUE),
+                      Asteroid(WIDTH / 2 - EARTHORBITRADIUS - MOONORBITRADIUS, 0, HEIGHT / 2, orbitalvelocity(SUNMASS,EARTHORBITRADIUS) + orbitalvelocity(500,MOONORBITRADIUS), 10**-40,
+                               1, GRAY),
+                      Asteroid(WIDTH / 2 + MERCURYORBITRADIUS, 0, HEIGHT / 2, -orbitalvelocity(SUNMASS,MERCURYORBITRADIUS), 300,
+                               2, RED),
+                      Asteroid(WIDTH / 2 + MERCURYORBITRADIUS + MERCURYMOONORBITRADIUS, 0, HEIGHT / 2, -orbitalvelocity(SUNMASS,MERCURYORBITRADIUS) + orbitalvelocity(300,MERCURYMOONORBITRADIUS), 10**-40,
+                               1, YELLOW),
+                      Asteroid(WIDTH / 2,  orbitalvelocity(SUNMASS,VENUSORBITRADIUS), HEIGHT / 2  - VENUSORBITRADIUS, 0, 300,
+                               2, ORANGE),
+                      Asteroid(WIDTH / 2 , orbitalvelocity(SUNMASS,VENUSORBITRADIUS) + orbitalvelocity(300,VENUSMOONORBITRADIUS), HEIGHT / 2 - VENUSORBITRADIUS - VENUSMOONORBITRADIUS, 0, 10**-40,
+                               1, GREEN)]
+
+
+for a in PLANETSANDMOONS:
+    SUNDX -= a.dx*a.m/SUNMASS
+    SUNDY -= a.dy*a.m/SUNMASS
+
+PLANETSANDMOONS.append(Asteroid(WIDTH/2, SUNDX, HEIGHT/2, SUNDY, SUNMASS, 50, YELLOW))
 
 
 REALSOLARSYSTEM = [Asteroid(WIDTH / 2 - 300, 0, HEIGHT / 2, 2, 5.972*10**24,
@@ -99,13 +126,13 @@ REALSOLARSYSTEM = [Asteroid(WIDTH / 2 - 300, 0, HEIGHT / 2, 2, 5.972*10**24,
                       Asteroid(WIDTH / 2 - 315, 0, HEIGHT / 2, 18, 7.3476*10**22,
                                1, GRAY)]
 
-TWINSUN = [Asteroid(WIDTH / 2 - 300, 0, HEIGHT / 2, 13, 500,
+TWINSUN = [Asteroid(WIDTH / 2 - 300, 0, HEIGHT / 2, orbitalvelocity(50000,300), 500,
                                4, BLUE),
-                      Asteroid(WIDTH / 2 - 50, 0, HEIGHT / 2, 10 - .13/2, 25000,
+                      Asteroid(WIDTH / 2 + 25, 0, HEIGHT / 2, (-orbitalvelocity(25000, 25)/2)-(orbitalvelocity(50000,300)*500)/(25000), 25000,
                                10, YELLOW),
-                      Asteroid(WIDTH / 2 + 50, 0, HEIGHT / 2, -10 - .13/2, 25000,
-                               10, GREEN),
-                      Asteroid(WIDTH / 2 - 315, 0, HEIGHT / 2, 18, 10**-40,
+                      Asteroid(WIDTH / 2 - 25, 0, HEIGHT / 2, (orbitalvelocity(25000, 25)/2), 25000,
+                               10, YELLOW),
+                      Asteroid(WIDTH / 2 - 315, 0, HEIGHT / 2, orbitalvelocity(50000,300) + orbitalvelocity(500,15), 10**-40,
                                1, GRAY)]
 
 STARTCOND = []
@@ -287,7 +314,10 @@ def main():
                     loa = copy.deepcopy(BLACKHOLE)
                     lot = []
                 if event.key == pygame.K_6:
-                    loa = copy.deepcopy(UNSTABLESUNPLANETMOON)
+                    loa = copy.deepcopy(PLANETSANDMOONS)
+                    lot = []
+                if event.key == pygame.K_7:
+                    loa = copy.deepcopy(TWINSUN)
                     lot = []
                 if event.key == pygame.K_EQUALS:
                     speed = speed * 1.1
